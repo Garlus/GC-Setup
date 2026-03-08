@@ -12,6 +12,7 @@ from gi.repository import Gtk, Adw, GLib, Gdk
 from src.installer.flatpak import install_flatpak_on_host
 from src.installer.extensions import install_extension
 from src.installer.appimage import install_helium
+from src.installer.native import install_native, resolve_system_command
 
 
 class ProgressSheet:
@@ -28,14 +29,15 @@ class ProgressSheet:
         self._rows = {}
         self._completed = 0
         self._total = 0
-        self._misc_items = []
+        self._system_items = []
         self._installable_items = []
         self._installing = False
 
-        # Separate misc from installable items
+        # Separate system (copyable commands) from installable items
         for item in self._items:
-            if item.get('install_type') == 'misc':
-                self._misc_items.append(item)
+            method = item.get('install', {}).get('method', '')
+            if method == 'system':
+                self._system_items.append(item)
             else:
                 self._installable_items.append(item)
 
@@ -86,62 +88,43 @@ class ProgressSheet:
             self._install_group = Adw.PreferencesGroup()
             self._content_box.append(self._install_group)
 
-        # Misc items section — show copy buttons with escaped text
-        if self._misc_items:
+        # System items section — single combined command
+        if self._system_items:
             misc_group = Adw.PreferencesGroup()
             misc_group.set_title('System Packages')
             misc_group.set_description(
-                'Copy the command and paste it into a terminal.'
+                'Copy the command below and paste it into a terminal.'
             )
 
-            for item in self._misc_items:
-                name = item.get('name', 'Unknown')
-                cmd = item.get('resolved_command', '')
+            # Resolve the correct command for each system item
+            names = []
+            commands = []
+            for item in self._system_items:
+                names.append(item.get('name', 'Unknown'))
+                cmd = resolve_system_command(item)
+                if cmd:
+                    commands.append(cmd)
 
-                row = Adw.ActionRow()
-                row.set_title(name)
-                safe_cmd = GLib.markup_escape_text(cmd)
-                if len(safe_cmd) > 80:
-                    safe_cmd = GLib.markup_escape_text(cmd[:77]) + '...'
-                row.set_subtitle(safe_cmd)
-                row.set_subtitle_lines(1)
+            combined = ' && '.join(commands)
 
-                copy_btn = Gtk.Button(icon_name='edit-copy-symbolic')
-                copy_btn.set_valign(Gtk.Align.CENTER)
-                copy_btn.set_tooltip_text('Copy command')
-                copy_btn.set_css_classes(['flat'])
-                copy_btn.connect('clicked', self._on_copy_command, cmd, row)
-                row.add_suffix(copy_btn)
+            row = Adw.ActionRow()
+            row.set_title(', '.join(names))
+            safe_cmd = GLib.markup_escape_text(combined)
+            row.set_subtitle(safe_cmd)
+            row.set_subtitle_lines(3)
 
-                misc_group.add(row)
+            copy_btn = Gtk.Button(icon_name='edit-copy-symbolic')
+            copy_btn.set_valign(Gtk.Align.CENTER)
+            copy_btn.set_tooltip_text('Copy command')
+            copy_btn.set_css_classes(['flat'])
+            copy_btn.connect('clicked', self._on_copy_command, combined, row)
+            row.add_suffix(copy_btn)
 
-            # Copy All button
-            if len(self._misc_items) > 1:
-                combined = ' && '.join(
-                    item.get('resolved_command', '')
-                    for item in self._misc_items
-                    if item.get('resolved_command')
-                )
-                copy_all_row = Adw.ActionRow()
-                copy_all_row.set_title('Copy All Commands')
-                copy_all_row.set_subtitle(
-                    'Combined command for all selected packages'
-                )
-
-                copy_all_btn = Gtk.Button(icon_name='edit-copy-symbolic')
-                copy_all_btn.set_valign(Gtk.Align.CENTER)
-                copy_all_btn.set_css_classes(['flat'])
-                copy_all_btn.set_tooltip_text('Copy combined command')
-                copy_all_btn.connect(
-                    'clicked', self._on_copy_command, combined, copy_all_row
-                )
-                copy_all_row.add_suffix(copy_all_btn)
-                misc_group.add(copy_all_row)
-
+            misc_group.add(row)
             self._content_box.append(misc_group)
 
         # Empty state
-        if not self._installable_items and not self._misc_items:
+        if not self._installable_items and not self._system_items:
             label = Gtk.Label(label='Nothing to do.')
             label.set_margin_top(24)
             self._content_box.append(label)
@@ -153,7 +136,7 @@ class ProgressSheet:
     def start(self):
         """Start installing all installable items sequentially in a thread."""
         if not self._installable_items:
-            # Only misc items — already shown, mark complete immediately
+            # Only system items — already shown, mark complete immediately
             self._on_all_complete()
             return
 
@@ -178,20 +161,34 @@ class ProgressSheet:
         GLib.idle_add(self._on_all_complete)
 
     def _do_install(self, item):
-        """Install a single item. Returns (success, message)."""
-        install_type = item.get('install_type', '')
+        """Install a single item. Returns (success, message).
 
-        if install_type == 'flatpak':
-            flatpak_id = item.get('flatpak_id', '')
+        Dispatches based on item['install']['method'].
+        """
+        install_info = item.get('install', {})
+        method = install_info.get('method', '')
+
+        if method == 'native':
+            return install_native(item)
+
+        elif method == 'flatpak':
+            flatpak_id = install_info.get('flatpak_id', '')
+            if not flatpak_id:
+                return False, 'No flatpak_id specified'
             return install_flatpak_on_host(flatpak_id)
-        elif install_type == 'extension':
-            ext_id = item.get('ext_id', 0)
-            uuid = item.get('uuid', '')
+
+        elif method == 'extension':
+            ext_id = install_info.get('ext_id', 0)
+            uuid = install_info.get('uuid', '')
+            if not ext_id or not uuid:
+                return False, 'Missing ext_id or uuid'
             return install_extension(ext_id, uuid)
-        elif install_type == 'appimage':
+
+        elif method == 'appimage':
             return install_helium()
+
         else:
-            return False, f'Unknown install type: {install_type}'
+            return False, f'Unknown install method: {method}'
 
     def _show_item_installing(self, name):
         """Add a row with a spinner for this item."""

@@ -1,0 +1,670 @@
+{
+  "categories": [
+    {
+      "id": "web-browsers",
+      "name": "Web Browsers",
+      "icon": "web-browser-symbolic",
+      "items": [
+        {
+          "name": "Zen Browser",
+          "description": "Privacy-focused, beautifully designed browser",
+          "install": { "method": "flatpak", "flatpak_id": "app.zen_browser.zen" },
+          "detect": { "flatpak_id": "app.zen_browser.zen" }
+        },
+        {
+          "name": "Helium",
+          "description": "Private, fast Chromium-based browser (AppImage)",
+          "install": { "method": "appimage", "repo": "imputnet/helium-linux" },
+          "detect": { "command": "helium" }
+        },
+        {
+          "name": "Firefox",
+          "description": "Open-source web browser by Mozilla",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "firefox",
+              "dnf": "firefox",
+              "pacman": "firefox",
+              "zypper": "MozillaFirefox"
+            },
+            "flatpak_fallback": "org.mozilla.firefox"
+          },
+          "detect": { "command": "firefox", "flatpak_id": "org.mozilla.firefox" }
+        },
+        {
+          "name": "Brave",
+          "description": "Privacy-first browser with built-in ad blocker",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "brave-browser",
+              "dnf": "brave-browser",
+              "pacman": "brave-bin",
+              "zypper": "brave-browser"
+            },
+            "flatpak_fallback": "com.brave.Browser"
+          },
+          "detect": { "command": "brave-browser", "flatpak_id": "com.brave.Browser" }
+        },
+        {
+          "name": "Chromium",
+          "description": "Open-source base of Google Chrome",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "chromium-browser",
+              "dnf": "chromium",
+              "pacman": "chromium",
+              "zypper": "chromium"
+            },
+            "flatpak_fallback": "org.chromium.Chromium"
+          },
+          "detect": { "command": "chromium-browser", "flatpak_id": "org.chromium.Chromium" }
+        },
+        {
+          "name": "Vivaldi",
+          "description": "Feature-rich, customizable browser",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "vivaldi-stable",
+              "dnf": "vivaldi-stable",
+              "pacman": "vivaldi",
+              "zypper": "vivaldi-stable"
+            },
+            "flatpak_fallback": "com.vivaldi.Vivaldi"
+          },
+          "detect": { "command": "vivaldi-stable", "flatpak_id": "com.vivaldi.Vivaldi" }
+        },
+        {
+          "name": "Tor Browser",
+          "description": "Browse anonymously via the Tor network",
+          "install": { "method": "flatpak", "flatpak_id": "org.torproject.torbrowser-launcher" },
+          "detect": { "flatpak_id": "org.torproject.torbrowser-launcher" }
+        }
+      ]
+    },
+    {
+      "id": "communication",
+      "name": "Communication",
+      "icon": "user-available-symbolic",
+      "items": [
+        {
+          "name": "Telegram",
+          "description": "Cloud-based messaging app",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "telegram-desktop",
+              "dnf": "telegram-desktop",
+              "pacman": "telegram-desktop",
+              "zypper": "telegram-desktop"
+            },
+            "flatpak_fallback": "org.telegram.desktop"
+          },
+          "detect": { "command": "telegram-desktop", "flatpak_id": "org.telegram.desktop" }
+        },
+        {
+          "name": "Discord",
+          "description": "Voice, video, and text chat",
+          "install": { "method": "flatpak", "flatpak_id": "com.discordapp.Discord" },
+          "detect": { "flatpak_id": "com.discordapp.Discord" }
+        },
+        {
+          "name": "Signal",
+          "description": "Private encrypted messenger",
+          "install": { "method": "flatpak", "flatpak_id": "org.signal.Signal" },
+          "detect": { "flatpak_id": "org.signal.Signal" }
+        },
+        {
+          "name": "Thunderbird",
+          "description": "Email, calendar, and contacts",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "thunderbird",
+              "dnf": "thunderbird",
+              "pacman": "thunderbird",
+              "zypper": "MozillaThunderbird"
+            },
+            "flatpak_fallback": "org.mozilla.Thunderbird"
+          },
+          "detect": { "command": "thunderbird", "flatpak_id": "org.mozilla.Thunderbird" }
+        },
+        {
+          "name": "Slack",
+          "description": "Team collaboration and messaging",
+          "install": { "method": "flatpak", "flatpak_id": "com.slack.Slack" },
+          "detect": { "flatpak_id": "com.slack.Slack" }
+        },
+        {
+          "name": "Zoom",
+          "description": "Video conferencing",
+          "install": { "method": "flatpak", "flatpak_id": "us.zoom.Zoom" },
+          "detect": { "flatpak_id": "us.zoom.Zoom" }
+        }
+      ]
+    },
+    {
+      "id": "developer-tools",
+      "name": "Developer Tools",
+      "icon": "utilities-terminal-symbolic",
+      "items": [
+        {
+          "name": "VS Code",
+          "description": "Code editor by Microsoft",
+          "install": { "method": "flatpak", "flatpak_id": "com.visualstudio.code" },
+          "detect": { "command": "code", "flatpak_id": "com.visualstudio.code" }
+        },
+        {
+          "name": "VSCodium",
+          "description": "Telemetry-free VS Code",
+          "install": { "method": "flatpak", "flatpak_id": "com.vscodium.codium" },
+          "detect": { "command": "codium", "flatpak_id": "com.vscodium.codium" }
+        },
+        {
+          "name": "GNOME Builder",
+          "description": "IDE for GNOME apps",
+          "install": { "method": "flatpak", "flatpak_id": "org.gnome.Builder" },
+          "detect": { "flatpak_id": "org.gnome.Builder" }
+        },
+        {
+          "name": "Zed",
+          "description": "High-performance collaborative code editor",
+          "install": { "method": "flatpak", "flatpak_id": "dev.zed.Zed" },
+          "detect": { "command": "zed", "flatpak_id": "dev.zed.Zed" }
+        },
+        {
+          "name": "Sublime Text",
+          "description": "Sophisticated text editor",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "sublime-text",
+              "dnf": "sublime-text",
+              "pacman": "sublime-text",
+              "zypper": "sublime-text"
+            },
+            "flatpak_fallback": "com.sublimetext.three"
+          },
+          "detect": { "command": "subl", "flatpak_id": "com.sublimetext.three" }
+        },
+        {
+          "name": "GitHub Desktop",
+          "description": "Git GUI for GitHub",
+          "install": { "method": "flatpak", "flatpak_id": "io.github.shiftkey.Desktop" },
+          "detect": { "flatpak_id": "io.github.shiftkey.Desktop" }
+        },
+        {
+          "name": "Meld",
+          "description": "Visual diff and merge tool",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "meld",
+              "dnf": "meld",
+              "pacman": "meld",
+              "zypper": "meld"
+            },
+            "flatpak_fallback": "org.gnome.Meld"
+          },
+          "detect": { "command": "meld", "flatpak_id": "org.gnome.Meld" }
+        }
+      ]
+    },
+    {
+      "id": "design-tools",
+      "name": "Design Tools",
+      "icon": "applications-graphics-symbolic",
+      "items": [
+        {
+          "name": "GIMP",
+          "description": "Image editor",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "gimp",
+              "dnf": "gimp",
+              "pacman": "gimp",
+              "zypper": "gimp"
+            },
+            "flatpak_fallback": "org.gimp.GIMP"
+          },
+          "detect": { "command": "gimp", "flatpak_id": "org.gimp.GIMP" }
+        },
+        {
+          "name": "Inkscape",
+          "description": "Vector graphics editor",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "inkscape",
+              "dnf": "inkscape",
+              "pacman": "inkscape",
+              "zypper": "inkscape"
+            },
+            "flatpak_fallback": "org.inkscape.Inkscape"
+          },
+          "detect": { "command": "inkscape", "flatpak_id": "org.inkscape.Inkscape" }
+        },
+        {
+          "name": "Krita",
+          "description": "Digital painting application",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "krita",
+              "dnf": "krita",
+              "pacman": "krita",
+              "zypper": "krita"
+            },
+            "flatpak_fallback": "org.kde.krita"
+          },
+          "detect": { "command": "krita", "flatpak_id": "org.kde.krita" }
+        },
+        {
+          "name": "Blender",
+          "description": "3D creation suite",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "blender",
+              "dnf": "blender",
+              "pacman": "blender",
+              "zypper": "blender"
+            },
+            "flatpak_fallback": "org.blender.Blender"
+          },
+          "detect": { "command": "blender", "flatpak_id": "org.blender.Blender" }
+        },
+        {
+          "name": "Darktable",
+          "description": "Photography workflow and RAW developer",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "darktable",
+              "dnf": "darktable",
+              "pacman": "darktable",
+              "zypper": "darktable"
+            },
+            "flatpak_fallback": "org.darktable.Darktable"
+          },
+          "detect": { "command": "darktable", "flatpak_id": "org.darktable.Darktable" }
+        },
+        {
+          "name": "OBS Studio",
+          "description": "Streaming and screen recording",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "obs-studio",
+              "dnf": "obs-studio",
+              "pacman": "obs-studio",
+              "zypper": "obs-studio"
+            },
+            "flatpak_fallback": "com.obsproject.Studio"
+          },
+          "detect": { "command": "obs", "flatpak_id": "com.obsproject.Studio" }
+        },
+        {
+          "name": "HandBrake",
+          "description": "Video transcoder",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "handbrake",
+              "dnf": "HandBrake-gui",
+              "pacman": "handbrake",
+              "zypper": "handbrake"
+            },
+            "flatpak_fallback": "fr.handbrake.ghb"
+          },
+          "detect": { "command": "ghb", "flatpak_id": "fr.handbrake.ghb" }
+        },
+        {
+          "name": "Audacity",
+          "description": "Audio editor and recorder",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "audacity",
+              "dnf": "audacity",
+              "pacman": "audacity",
+              "zypper": "audacity"
+            },
+            "flatpak_fallback": "org.audacityteam.Audacity"
+          },
+          "detect": { "command": "audacity", "flatpak_id": "org.audacityteam.Audacity" }
+        },
+        {
+          "name": "Kdenlive",
+          "description": "Non-linear video editor",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "kdenlive",
+              "dnf": "kdenlive",
+              "pacman": "kdenlive",
+              "zypper": "kdenlive"
+            },
+            "flatpak_fallback": "org.kde.kdenlive"
+          },
+          "detect": { "command": "kdenlive", "flatpak_id": "org.kde.kdenlive" }
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "name": "Media",
+      "icon": "applications-multimedia-symbolic",
+      "items": [
+        {
+          "name": "Fragments",
+          "description": "BitTorrent client for GNOME",
+          "install": { "method": "flatpak", "flatpak_id": "de.haeckerfelix.Fragments" },
+          "detect": { "flatpak_id": "de.haeckerfelix.Fragments" }
+        },
+        {
+          "name": "Cine",
+          "description": "Clean, MPV-based video player",
+          "install": { "method": "flatpak", "flatpak_id": "io.github.diegopvlk.Cine" },
+          "detect": { "flatpak_id": "io.github.diegopvlk.Cine" }
+        },
+        {
+          "name": "VLC",
+          "description": "Multimedia player for everything",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "vlc",
+              "dnf": "vlc",
+              "pacman": "vlc",
+              "zypper": "vlc"
+            },
+            "flatpak_fallback": "org.videolan.VLC"
+          },
+          "detect": { "command": "vlc", "flatpak_id": "org.videolan.VLC" }
+        },
+        {
+          "name": "Celluloid",
+          "description": "GTK frontend for MPV",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "celluloid",
+              "dnf": "celluloid",
+              "pacman": "celluloid",
+              "zypper": "celluloid"
+            },
+            "flatpak_fallback": "io.github.celluloid_player.Celluloid"
+          },
+          "detect": { "command": "celluloid", "flatpak_id": "io.github.celluloid_player.Celluloid" }
+        },
+        {
+          "name": "Spotify",
+          "description": "Music streaming",
+          "install": { "method": "flatpak", "flatpak_id": "com.spotify.Client" },
+          "detect": { "flatpak_id": "com.spotify.Client" }
+        }
+      ]
+    },
+    {
+      "id": "gaming",
+      "name": "Gaming",
+      "icon": "applications-games-symbolic",
+      "items": [
+        {
+          "name": "Steam",
+          "description": "Gaming platform by Valve",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "steam-installer",
+              "dnf": "steam",
+              "pacman": "steam",
+              "zypper": "steam"
+            },
+            "flatpak_fallback": "com.valvesoftware.Steam"
+          },
+          "detect": { "command": "steam", "flatpak_id": "com.valvesoftware.Steam" }
+        },
+        {
+          "name": "Heroic",
+          "description": "Epic, GOG, and Amazon Games launcher",
+          "install": { "method": "flatpak", "flatpak_id": "com.heroicgameslauncher.hgl" },
+          "detect": { "flatpak_id": "com.heroicgameslauncher.hgl" }
+        },
+        {
+          "name": "Lutris",
+          "description": "Open gaming platform",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "lutris",
+              "dnf": "lutris",
+              "pacman": "lutris",
+              "zypper": "lutris"
+            },
+            "flatpak_fallback": "net.lutris.Lutris"
+          },
+          "detect": { "command": "lutris", "flatpak_id": "net.lutris.Lutris" }
+        },
+        {
+          "name": "Bottles",
+          "description": "Run Windows software on Linux",
+          "install": { "method": "flatpak", "flatpak_id": "com.usebottles.bottles" },
+          "detect": { "flatpak_id": "com.usebottles.bottles" }
+        }
+      ]
+    },
+    {
+      "id": "utilities",
+      "name": "Utilities",
+      "icon": "applications-utilities-symbolic",
+      "items": [
+        {
+          "name": "Flatseal",
+          "description": "Manage Flatpak permissions",
+          "install": { "method": "flatpak", "flatpak_id": "com.github.tchx84.Flatseal" },
+          "detect": { "flatpak_id": "com.github.tchx84.Flatseal" }
+        },
+        {
+          "name": "Proton VPN",
+          "description": "Secure VPN by Proton",
+          "install": { "method": "flatpak", "flatpak_id": "com.protonvpn.www" },
+          "detect": { "flatpak_id": "com.protonvpn.www" }
+        },
+        {
+          "name": "Refine",
+          "description": "Customize various aspects of GNOME",
+          "install": { "method": "flatpak", "flatpak_id": "page.tesk.Refine" },
+          "detect": { "flatpak_id": "page.tesk.Refine" }
+        },
+        {
+          "name": "Obsidian",
+          "description": "Markdown knowledge base",
+          "install": { "method": "flatpak", "flatpak_id": "md.obsidian.Obsidian" },
+          "detect": { "flatpak_id": "md.obsidian.Obsidian" }
+        },
+        {
+          "name": "Cohesion",
+          "description": "Unofficial Notion desktop client",
+          "install": { "method": "flatpak", "flatpak_id": "io.github.brunofin.Cohesion" },
+          "detect": { "flatpak_id": "io.github.brunofin.Cohesion" }
+        },
+        {
+          "name": "LibreOffice",
+          "description": "Full-featured office suite",
+          "install": {
+            "method": "native",
+            "packages": {
+              "apt": "libreoffice",
+              "dnf": "libreoffice",
+              "pacman": "libreoffice-fresh",
+              "zypper": "libreoffice"
+            },
+            "flatpak_fallback": "org.libreoffice.LibreOffice"
+          },
+          "detect": { "command": "libreoffice", "flatpak_id": "org.libreoffice.LibreOffice" }
+        }
+      ]
+    },
+    {
+      "id": "gnome-extensions",
+      "name": "GNOME Extensions",
+      "icon": "application-x-addon-symbolic",
+      "items": [
+        {
+          "name": "Blur my Shell",
+          "description": "Adds blur to GNOME Shell UI elements",
+          "install": { "method": "extension", "ext_id": 3193, "uuid": "blur-my-shell@aunetx" },
+          "detect": { "extension_uuid": "blur-my-shell@aunetx" }
+        },
+        {
+          "name": "Night Theme Switcher",
+          "description": "Automatically toggle light/dark theme at sunset and sunrise",
+          "install": { "method": "extension", "ext_id": 2236, "uuid": "nightthemeswitcher@romainvigier.fr" },
+          "detect": { "extension_uuid": "nightthemeswitcher@romainvigier.fr" }
+        },
+        {
+          "name": "Luminus",
+          "description": "Alternative default light theme for vanilla GNOME",
+          "install": { "method": "extension", "ext_id": 6750, "uuid": "luminus@dikasp" },
+          "detect": { "extension_uuid": "luminus@dikasp" }
+        }
+      ]
+    },
+    {
+      "id": "system-tweaks",
+      "name": "System Tweaks",
+      "icon": "preferences-other-symbolic",
+      "items": [
+        {
+          "name": "Full System Update",
+          "description": "Update all system packages and Flatpaks to their latest versions",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt update && sudo apt upgrade -y && flatpak update -y",
+              "dnf": "sudo dnf upgrade -y && flatpak update -y",
+              "pacman": "sudo pacman -Syu --noconfirm && flatpak update -y",
+              "zypper": "sudo zypper ref && sudo zypper --non-interactive dup && flatpak update -y"
+            }
+          },
+          "detect": {}
+        },
+        {
+          "name": "Full System Cleanup",
+          "description": "Remove unnecessary packages, clean old caches, truncate logs, and empty the trash",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt autoremove -y && sudo apt clean && sudo journalctl --vacuum-time=3d && find ~/.cache/ -type f -atime +5 -delete 2>/dev/null; find ~/.local/share/Trash -mindepth 1 -delete 2>/dev/null; echo 'Cleanup complete'",
+              "dnf": "sudo dnf autoremove -y && sudo dnf clean all && sudo journalctl --vacuum-time=3d && find ~/.cache/ -type f -atime +5 -delete 2>/dev/null; find ~/.local/share/Trash -mindepth 1 -delete 2>/dev/null; echo 'Cleanup complete'",
+              "pacman": "sudo pacman -Sc --noconfirm && sudo pacman -Rns $(pacman -Qtdq) --noconfirm 2>/dev/null; sudo journalctl --vacuum-time=3d && find ~/.cache/ -type f -atime +5 -delete 2>/dev/null; find ~/.local/share/Trash -mindepth 1 -delete 2>/dev/null; echo 'Cleanup complete'",
+              "zypper": "sudo zypper clean --all && sudo journalctl --vacuum-time=3d && find ~/.cache/ -type f -atime +5 -delete 2>/dev/null; find ~/.local/share/Trash -mindepth 1 -delete 2>/dev/null; echo 'Cleanup complete'"
+            }
+          },
+          "detect": {}
+        },
+        {
+          "name": "Virtualization (QEMU/KVM)",
+          "description": "Install QEMU, libvirt, and Virt-Manager for running virtual machines",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt install -y qemu-system-x86 libvirt-daemon-system libvirt-clients virt-manager bridge-utils dnsmasq && sudo systemctl enable --now libvirtd && sudo usermod -aG libvirt $USER",
+              "dnf": "sudo dnf install -y @virtualization && sudo systemctl enable --now libvirtd && sudo usermod -aG libvirt $USER",
+              "pacman": "sudo pacman -S --noconfirm qemu-desktop libvirt virt-manager dnsmasq iptables-nft dmidecode && sudo systemctl enable --now libvirtd && sudo usermod -aG libvirt $USER && sudo usermod -aG kvm $USER",
+              "zypper": "sudo zypper install -y qemu-kvm libvirt virt-manager dnsmasq && sudo systemctl enable --now libvirtd && sudo usermod -aG libvirt $USER"
+            }
+          },
+          "detect": { "command": "virt-manager" }
+        },
+        {
+          "name": "TTY Fonts (Terminus)",
+          "description": "Install Terminus console font and set it as the default TTY font for better readability",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt install -y fonts-terminus && sudo sed -i 's/^FONTFACE=.*/FONTFACE=\"TerminusBold\"/' /etc/default/console-setup && sudo sed -i 's/^FONTSIZE=.*/FONTSIZE=\"10x18\"/' /etc/default/console-setup && sudo update-initramfs -u",
+              "dnf": "sudo dnf install -y terminus-fonts-console && sudo sed -i 's/^FONT=.*/FONT=ter-v18b/' /etc/vconsole.conf",
+              "pacman": "sudo pacman -S --noconfirm terminus-font && sudo sed -i 's/^FONT=.*/FONT=ter-v18b/' /etc/vconsole.conf",
+              "zypper": "sudo zypper install -y terminus-bitmap-fonts && sudo sed -i 's/^FONT=.*/FONT=ter-v18b/' /etc/vconsole.conf"
+            }
+          },
+          "detect": {}
+        },
+        {
+          "name": "Microsoft Fonts",
+          "description": "Core Microsoft TrueType fonts (Arial, Times New Roman, etc.)",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt install -y ttf-mscorefonts-installer",
+              "dnf": "sudo dnf install -y curl cabextract xorg-x11-font-utils fontconfig && sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm",
+              "pacman": "yay -S --noconfirm ttf-ms-fonts || paru -S --noconfirm ttf-ms-fonts",
+              "zypper": "sudo zypper install -y fetchmsttfonts"
+            }
+          },
+          "detect": { "command": "fc-match" }
+        },
+        {
+          "name": "Common Codecs",
+          "description": "GStreamer multimedia codecs for video and audio playback",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt install -y gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav",
+              "dnf": "sudo dnf install -y gstreamer1-plugins-good gstreamer1-plugins-bad-free gstreamer1-plugins-ugly gstreamer1-plugins-bad-freeworld gstreamer1-plugin-libav",
+              "pacman": "sudo pacman -S --noconfirm gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav",
+              "zypper": "sudo zypper install -y gstreamer-plugins-good gstreamer-plugins-bad gstreamer-plugins-ugly gstreamer-plugins-libav"
+            }
+          },
+          "detect": {}
+        },
+        {
+          "name": "xpadneo (Xbox Controller Driver)",
+          "description": "Advanced Linux driver for Xbox One/Series wireless controllers",
+          "install": {
+            "method": "system",
+            "commands": {
+              "all": "sudo bash -c 'apt install -y dkms linux-headers-$(uname -r) 2>/dev/null || dnf install -y dkms kernel-devel 2>/dev/null || pacman -S --noconfirm dkms linux-headers 2>/dev/null; cd /tmp && rm -rf xpadneo && git clone https://github.com/atar-axis/xpadneo.git && cd xpadneo && ./install.sh'"
+            }
+          },
+          "detect": { "command": "modinfo" }
+        },
+        {
+          "name": "btop++",
+          "description": "Resource monitor with advanced CPU, memory, disk, network, and process stats",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt install -y btop",
+              "dnf": "sudo dnf install -y btop",
+              "pacman": "sudo pacman -S --noconfirm btop",
+              "zypper": "sudo zypper install -y btop"
+            }
+          },
+          "detect": { "command": "btop" }
+        },
+        {
+          "name": "fastfetch",
+          "description": "Fast and feature-rich system information tool",
+          "install": {
+            "method": "system",
+            "commands": {
+              "apt": "sudo apt install -y fastfetch || (sudo add-apt-repository -y ppa:zhangsongcui3371/fastfetch && sudo apt update && sudo apt install -y fastfetch)",
+              "dnf": "sudo dnf install -y fastfetch",
+              "pacman": "sudo pacman -S --noconfirm fastfetch",
+              "zypper": "sudo zypper install -y fastfetch"
+            }
+          },
+          "detect": { "command": "fastfetch" }
+        }
+      ]
+    }
+  ]
+}

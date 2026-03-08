@@ -28,9 +28,7 @@ install_data('data' / 'icons' / app_id + '.svg',
 
 # Install JSON data files
 install_data(
-  'src' / 'data' / 'apps.json',
-  'src' / 'data' / 'extensions.json',
-  'src' / 'data' / 'misc.json',
+  'src' / 'data' / 'catalog.json',
   install_dir: pkgdatadir / 'data'
 )
 

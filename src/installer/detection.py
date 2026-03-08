@@ -1,4 +1,8 @@
-"""Detection module — checks what is already installed on startup."""
+"""Detection module — checks what is already installed on startup.
+
+Uses the unified catalog item format where detection info is nested
+under item['detect'] with keys: command, flatpak_id, extension_uuid.
+"""
 
 import os
 import subprocess
@@ -8,61 +12,46 @@ from src.installer.extensions import is_extension_installed
 from src.installer.appimage import is_helium_installed
 
 
-def detect_installed_apps(apps_page):
-    """Check all apps on the apps page and mark installed ones.
+def detect_installed_items(pages):
+    """Check all items across all pages and mark installed ones.
 
-    Should be called from a background thread, with UI updates
-    posted via GLib.idle_add.
+    Should be called from a background thread.  UI updates are posted
+    via GLib.idle_add.
+
+    Args:
+        pages: List of CategoryPage (or subclass) instances.
     """
     from gi.repository import GLib
 
-    for row, checkbox, app_data in apps_page.get_check_rows():
-        install_type = app_data.get('install_type', '')
+    for page in pages:
+        for _row, _checkbox, item_data in page.get_check_rows():
+            detect = item_data.get('detect', {})
+            install = item_data.get('install', {})
+            method = install.get('method', '')
 
-        installed = False
-        if install_type == 'flatpak':
-            flatpak_id = app_data.get('flatpak_id', '')
-            if flatpak_id:
+            installed = False
+
+            # 1. Check by command existence on host
+            cmd_name = detect.get('command')
+            if cmd_name and not installed:
+                installed = _check_binary_on_host(cmd_name)
+
+            # 2. Check by Flatpak ID
+            flatpak_id = detect.get('flatpak_id')
+            if flatpak_id and not installed:
                 installed = is_flatpak_installed_on_host(flatpak_id)
-        elif install_type == 'appimage':
-            # Helium special case
-            if 'helium' in app_data.get('name', '').lower():
+
+            # 3. Check by GNOME extension UUID
+            ext_uuid = detect.get('extension_uuid')
+            if ext_uuid and not installed:
+                installed = is_extension_installed(ext_uuid)
+
+            # 4. Special case: AppImage (Helium)
+            if method == 'appimage' and not installed:
                 installed = is_helium_installed()
 
-        if installed:
-            GLib.idle_add(apps_page.mark_installed, app_data)
-
-
-def detect_installed_extensions(extensions_page):
-    """Check all extensions on the extensions page and mark installed ones."""
-    from gi.repository import GLib
-
-    for row, checkbox, ext_data in extensions_page.get_check_rows():
-        uuid = ext_data.get('uuid', '')
-        if uuid and is_extension_installed(uuid):
-            GLib.idle_add(extensions_page.mark_installed, ext_data)
-
-
-def detect_installed_misc(misc_page):
-    """Check which misc tools are already installed.
-
-    For system packages, we check if the binary exists on the host.
-    """
-    from gi.repository import GLib
-
-    binary_checks = {
-        'btop++': 'btop',
-        'fastfetch': 'fastfetch',
-        'Steam': 'steam',
-    }
-
-    for row, checkbox, item_data in misc_page._items:
-        name = item_data.get('name', '')
-        binary = binary_checks.get(name)
-        if binary:
-            installed = _check_binary_on_host(binary)
             if installed:
-                GLib.idle_add(_mark_misc_installed, row, checkbox, item_data)
+                GLib.idle_add(page.mark_installed, item_data)
 
 
 def _check_binary_on_host(binary_name):
@@ -74,17 +63,9 @@ def _check_binary_on_host(binary_name):
                 capture_output=True,
                 timeout=5,
             )
+            return result.returncode == 0
         else:
             import shutil
             return shutil.which(binary_name) is not None
-        return result.returncode == 0
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         return False
-
-
-def _mark_misc_installed(row, checkbox, item_data):
-    """Mark a misc item as installed in the UI."""
-    checkbox.set_active(True)
-    checkbox.set_sensitive(False)
-    row.set_sensitive(False)
-    row.set_subtitle(f"{item_data.get('description', '')} (installed)")
