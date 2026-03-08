@@ -19,8 +19,9 @@ class CategoryPage(Gtk.ScrolledWindow):
         self._category_id = category_data.get('id', '')
         self._check_rows = []  # List of (row, checkbox, item_data)
 
-        page = Adw.PreferencesPage()
-        page.set_margin_bottom(60)
+        self._pref_page = Adw.PreferencesPage()
+        self._pref_page.set_margin_bottom(60)
+        page = self._pref_page
 
         group = Adw.PreferencesGroup()
         group.set_title(category_data.get('name', ''))

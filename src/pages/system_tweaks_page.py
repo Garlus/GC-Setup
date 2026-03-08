@@ -20,7 +20,7 @@ class SystemTweaksPage(CategoryPage):
         super().__init__(category_data, **kwargs)
 
         # Append font rendering group to the existing page
-        page = self.get_child()  # AdwPreferencesPage
+        page = self._pref_page  # Set by CategoryPage.__init__
 
         font_group = Adw.PreferencesGroup()
         font_group.set_title('Font Rendering')
