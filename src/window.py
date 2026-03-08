@@ -12,7 +12,7 @@ from gi.repository import Gtk, Adw, GLib
 from src.pages.apps_page import AppsPage
 from src.pages.extensions_page import ExtensionsPage
 from src.pages.misc_page import MiscPage
-from src.installer.dialog import ProgressWindow
+from src.installer.dialog import ProgressSheet
 from src.installer.detection import (
     detect_installed_apps,
     detect_installed_extensions,
@@ -31,6 +31,7 @@ class GCSetupWindow(Adw.ApplicationWindow):
 
         # Track all pages for collecting selections
         self._pages = {}
+        self._progress_sheet = None
 
         # Build the UI
         self._build_ui()
@@ -40,7 +41,6 @@ class GCSetupWindow(Adw.ApplicationWindow):
 
     def _build_ui(self):
         # Root: OverlaySplitView — each pane gets its own header bar
-        # so the sidebar integrates with the window chrome.
         self._split_view = Adw.OverlaySplitView()
         self._split_view.set_collapsed(False)
         self._split_view.set_min_sidebar_width(200)
@@ -131,14 +131,22 @@ class GCSetupWindow(Adw.ApplicationWindow):
         self._content_stack.add_named(extensions_page, 'extensions')
         self._content_stack.add_named(misc_page, 'misc')
 
-        # Content wrapper with bottom bar
-        content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        content_box.set_vexpand(True)
-
         self._content_stack.set_vexpand(True)
-        content_box.append(self._content_stack)
 
-        # === BOTTOM BAR ===
+        # === BOTTOM SHEET ===
+        # AdwBottomSheet wraps the content stack.
+        # - content: the pages stack
+        # - bottom_bar: the Apply button (visible when sheet is closed)
+        # - sheet: the progress view (visible when sheet is open)
+        self._bottom_sheet = Adw.BottomSheet()
+        self._bottom_sheet.set_content(self._content_stack)
+        self._bottom_sheet.set_full_width(True)
+        self._bottom_sheet.set_modal(True)
+        self._bottom_sheet.set_show_drag_handle(True)
+        # Don't allow user to open the sheet by swiping — only via Apply button
+        self._bottom_sheet.set_can_open(False)
+
+        # Bottom bar: Apply button
         bottom_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         bottom_bar.set_css_classes(['toolbar'])
         bottom_bar.set_margin_top(6)
@@ -147,14 +155,15 @@ class GCSetupWindow(Adw.ApplicationWindow):
         bottom_bar.set_margin_end(12)
         bottom_bar.set_halign(Gtk.Align.END)
 
-        install_button = Gtk.Button(label='Apply')
-        install_button.set_css_classes(['suggested-action', 'pill'])
-        install_button.connect('clicked', self._on_install_clicked)
-        bottom_bar.append(install_button)
+        self._apply_button = Gtk.Button(label='Apply')
+        self._apply_button.set_css_classes(['suggested-action', 'pill'])
+        self._apply_button.connect('clicked', self._on_apply_clicked)
+        bottom_bar.append(self._apply_button)
 
-        content_box.append(bottom_bar)
+        self._bottom_sheet.set_bottom_bar(bottom_bar)
+        self._bottom_sheet.set_reveal_bottom_bar(True)
 
-        content_toolbar.set_content(content_box)
+        content_toolbar.set_content(self._bottom_sheet)
 
         content_page = Adw.NavigationPage(title='Content')
         content_page.set_child(content_toolbar)
@@ -201,8 +210,8 @@ class GCSetupWindow(Adw.ApplicationWindow):
         if 0 <= index < len(page_names):
             self._content_stack.set_visible_child_name(page_names[index])
 
-    def _on_install_clicked(self, _button):
-        """Collect all selected items and start installation."""
+    def _on_apply_clicked(self, _button):
+        """Collect all selected items and open the bottom sheet."""
         selected_items = []
 
         # Collect from apps page
@@ -229,6 +238,31 @@ class GCSetupWindow(Adw.ApplicationWindow):
             dialog.present(self)
             return
 
-        # Open progress window
-        progress = ProgressWindow(selected_items, self)
-        progress.present()
+        # Build the progress sheet content
+        self._progress_sheet = ProgressSheet(
+            selected_items,
+            on_complete_cb=self._on_install_complete,
+        )
+
+        # Set the sheet widget and open it
+        self._bottom_sheet.set_sheet(self._progress_sheet.widget)
+        self._bottom_sheet.set_can_open(True)
+        self._bottom_sheet.set_can_close(False)
+        self._bottom_sheet.set_open(True)
+
+        # Disable the Apply button while installing
+        self._apply_button.set_sensitive(False)
+
+        # Start the installation
+        self._progress_sheet.start()
+
+    def _on_install_complete(self):
+        """Called when all installs are finished."""
+        # Allow closing the sheet
+        self._bottom_sheet.set_can_close(True)
+
+        # Re-enable the Apply button (reset state for next use)
+        self._apply_button.set_sensitive(True)
+
+        # Re-run detection to grey out newly installed items
+        self._run_detection()
