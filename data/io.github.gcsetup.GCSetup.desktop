@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=GC-Setup
+Comment=Set up your GNOME desktop with apps, extensions, and system tweaks
+Exec=gc-setup
+Icon=io.github.gcsetup.GCSetup
+Terminal=false
+Type=Application
+Categories=System;Settings;Utility;
+Keywords=setup;install;gnome;flatpak;extensions;
+StartupNotify=true

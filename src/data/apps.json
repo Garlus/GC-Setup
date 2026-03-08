@@ -1,0 +1,184 @@
+{
+  "categories": [
+    {
+      "name": "Browsers",
+      "icon": "web-browser-symbolic",
+      "apps": [
+        {
+          "name": "Zen",
+          "description": "Privacy-focused, beautifully designed browser",
+          "flatpak_id": "app.zen_browser.zen",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Helium",
+          "description": "Private, fast, and honest Chromium-based browser",
+          "appimage_repo": "imputnet/helium-linux",
+          "install_type": "appimage"
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "icon": "applications-multimedia-symbolic",
+      "apps": [
+        {
+          "name": "Fragments",
+          "description": "BitTorrent client for GNOME",
+          "flatpak_id": "de.haeckerfelix.Fragments",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Cine",
+          "description": "Clean, MPV-based video player",
+          "flatpak_id": "io.github.diegopvlk.Cine",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "HandBrake",
+          "description": "Video transcoder",
+          "flatpak_id": "fr.handbrake.ghb",
+          "install_type": "flatpak"
+        }
+      ]
+    },
+    {
+      "name": "Communication",
+      "icon": "user-available-symbolic",
+      "apps": [
+        {
+          "name": "Telegram",
+          "description": "Cloud-based messaging app",
+          "flatpak_id": "org.telegram.desktop",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Discord",
+          "description": "Voice, video, and text chat",
+          "flatpak_id": "com.discordapp.Discord",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Signal",
+          "description": "Private messenger",
+          "flatpak_id": "org.signal.Signal",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Thunderbird",
+          "description": "Email, calendar, and contacts",
+          "flatpak_id": "org.mozilla.Thunderbird",
+          "install_type": "flatpak"
+        }
+      ]
+    },
+    {
+      "name": "Development",
+      "icon": "utilities-terminal-symbolic",
+      "apps": [
+        {
+          "name": "VS Code",
+          "description": "Code editor by Microsoft",
+          "flatpak_id": "com.visualstudio.code",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "VSCodium",
+          "description": "Telemetry-free VS Code",
+          "flatpak_id": "com.vscodium.codium",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "GNOME Builder",
+          "description": "IDE for GNOME apps",
+          "flatpak_id": "org.gnome.Builder",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Zed",
+          "description": "High-performance code editor",
+          "flatpak_id": "dev.zed.Zed",
+          "install_type": "flatpak"
+        }
+      ]
+    },
+    {
+      "name": "Productivity",
+      "icon": "x-office-document-symbolic",
+      "apps": [
+        {
+          "name": "LibreOffice",
+          "description": "Office suite",
+          "flatpak_id": "org.libreoffice.LibreOffice",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Obsidian",
+          "description": "Markdown knowledge base",
+          "flatpak_id": "md.obsidian.Obsidian",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Cohesion",
+          "description": "Unofficial Notion desktop client",
+          "flatpak_id": "io.github.brunofin.Cohesion",
+          "install_type": "flatpak"
+        }
+      ]
+    },
+    {
+      "name": "Gaming",
+      "icon": "applications-games-symbolic",
+      "apps": [
+        {
+          "name": "Heroic",
+          "description": "Epic, GOG, and Amazon Games launcher",
+          "flatpak_id": "com.heroicgameslauncher.hgl",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Lutris",
+          "description": "Open gaming platform",
+          "flatpak_id": "net.lutris.Lutris",
+          "install_type": "flatpak"
+        }
+      ]
+    },
+    {
+      "name": "Utilities",
+      "icon": "applications-utilities-symbolic",
+      "apps": [
+        {
+          "name": "Flatseal",
+          "description": "Manage Flatpak permissions",
+          "flatpak_id": "com.github.tchx84.Flatseal",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Bottles",
+          "description": "Run Windows software on Linux",
+          "flatpak_id": "com.usebottles.bottles",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Proton VPN",
+          "description": "Secure VPN by Proton",
+          "flatpak_id": "com.protonvpn.www",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "OBS Studio",
+          "description": "Streaming and recording",
+          "flatpak_id": "com.obsproject.Studio",
+          "install_type": "flatpak"
+        },
+        {
+          "name": "Refine",
+          "description": "Customize various aspects of GNOME",
+          "flatpak_id": "page.tesk.Refine",
+          "install_type": "flatpak"
+        }
+      ]
+    }
+  ]
+}

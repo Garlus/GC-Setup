@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.gcsetup.GCSetup</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <name>GC-Setup</name>
+  <summary>Set up your GNOME desktop with apps, extensions, and system tweaks</summary>
+
+  <description>
+    <p>
+      GC-Setup helps you quickly configure a fresh GNOME desktop installation.
+      Select the apps you want from Flathub, choose GNOME Shell extensions to install,
+      and get guidance on system-level tweaks like codecs, fonts, and drivers.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Install Flatpak apps from Flathub with a single click</li>
+      <li>Install popular GNOME Shell extensions</li>
+      <li>Install the Helium browser (AppImage)</li>
+      <li>Guidance for system-level packages (codecs, fonts, drivers)</li>
+      <li>Automatic detection of already-installed software</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.gcsetup.GCSetup.desktop</launchable>
+
+  <url type="homepage">https://github.com/gcsetup/gc-setup</url>
+  <url type="bugtracker">https://github.com/gcsetup/gc-setup/issues</url>
+
+  <developer id="io.github.gcsetup">
+    <name>GC-Setup Team</name>
+  </developer>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#99c1f1</color>
+    <color type="primary" scheme_preference="dark">#1a5fb4</color>
+  </branding>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.0.0" date="2026-03-08">
+      <description>
+        <p>Initial release of GC-Setup.</p>
+      </description>
+    </release>
+  </releases>
+
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+</component>

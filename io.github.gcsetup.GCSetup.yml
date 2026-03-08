@@ -1,0 +1,28 @@
+{
+    "app-id": "io.github.gcsetup.GCSetup",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "49",
+    "sdk": "org.gnome.Sdk",
+    "command": "gc-setup",
+    "finish-args": [
+        "--share=network",
+        "--socket=wayland",
+        "--socket=fallback-x11",
+        "--device=dri",
+        "--talk-name=org.freedesktop.Flatpak",
+        "--talk-name=org.freedesktop.impl.portal.PermissionStore",
+        "--share=ipc"
+    ],
+    "modules": [
+        {
+            "name": "gc-setup",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "."
+                }
+            ]
+        }
+    ]
+}

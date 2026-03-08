@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+import os
+import sys
+
+pkgdatadir = '@PKGDATADIR@'
+
+sys.path.insert(1, pkgdatadir)
+os.environ['GC_SETUP_PKGDATADIR'] = pkgdatadir
+
+from src.main import main
+main()
