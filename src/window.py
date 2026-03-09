@@ -13,7 +13,7 @@ from gi.repository import Gtk, Adw, GLib
 
 from src.pages.category_page import CategoryPage
 from src.pages.system_tweaks_page import SystemTweaksPage
-from src.installer.dialog import ProgressSheet
+from src.installer.dialog import ProgressDialog
 from src.installer.detection import detect_installed_items
 
 
@@ -48,9 +48,8 @@ class GCSetupWindow(Adw.ApplicationWindow):
         self.set_title('GC-Setup')
         self.set_default_size(900, 700)
 
-        self._pages = {}  # category_id -> CategoryPage
-        self._category_ids = []  # ordered list of category IDs
-        self._progress_sheet = None
+        self._pages = {}          # category_id -> CategoryPage
+        self._category_ids = []   # ordered list of category IDs
 
         # Load catalog
         self._catalog = _load_catalog()
@@ -117,7 +116,7 @@ class GCSetupWindow(Adw.ApplicationWindow):
             row.set_child(box)
             self._sidebar_list.append(row)
 
-            # Page widget — system-tweaks gets the special page with font rendering
+            # Page widget
             if cat_id == 'system-tweaks':
                 page = SystemTweaksPage(cat)
             else:
@@ -148,34 +147,33 @@ class GCSetupWindow(Adw.ApplicationWindow):
         content_header.pack_end(about_btn)
         content_toolbar.add_top_bar(content_header)
 
-        self._content_stack.set_vexpand(True)
+        # Toast overlay wraps the page stack
+        self._toast_overlay = Adw.ToastOverlay()
+        self._toast_overlay.set_child(self._content_stack)
+        content_toolbar.set_content(self._toast_overlay)
 
-        # === BOTTOM SHEET ===
-        self._bottom_sheet = Adw.BottomSheet()
-        self._bottom_sheet.set_content(self._content_stack)
-        self._bottom_sheet.set_full_width(True)
-        self._bottom_sheet.set_modal(True)
-        self._bottom_sheet.set_show_drag_handle(True)
-        self._bottom_sheet.set_can_open(False)
-
-        # Bottom bar: Apply button
-        bottom_bar = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        bottom_bar.set_css_classes(['toolbar'])
+        # === BOTTOM BAR — Apply + Remove ===
+        bottom_bar = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            spacing=8,
+            halign=Gtk.Align.END,
+        )
         bottom_bar.set_margin_top(6)
         bottom_bar.set_margin_bottom(6)
         bottom_bar.set_margin_start(12)
         bottom_bar.set_margin_end(12)
-        bottom_bar.set_halign(Gtk.Align.END)
+
+        self._remove_button = Gtk.Button(label='Remove')
+        self._remove_button.set_css_classes(['destructive-action', 'pill'])
+        self._remove_button.connect('clicked', self._on_remove_clicked)
+        bottom_bar.append(self._remove_button)
 
         self._apply_button = Gtk.Button(label='Apply')
         self._apply_button.set_css_classes(['suggested-action', 'pill'])
         self._apply_button.connect('clicked', self._on_apply_clicked)
         bottom_bar.append(self._apply_button)
 
-        self._bottom_sheet.set_bottom_bar(bottom_bar)
-        self._bottom_sheet.set_reveal_bottom_bar(True)
-
-        content_toolbar.set_content(self._bottom_sheet)
+        content_toolbar.add_bottom_bar(bottom_bar)
 
         content_page = Adw.NavigationPage(title='Content')
         content_page.set_child(content_toolbar)
@@ -187,6 +185,8 @@ class GCSetupWindow(Adw.ApplicationWindow):
             self._sidebar_list.get_row_at_index(0)
         )
 
+    # ── Detection ─────────────────────────────────────────────────
+
     def _run_detection(self):
         """Run installed-software detection in background."""
         all_pages = list(self._pages.values())
@@ -195,6 +195,8 @@ class GCSetupWindow(Adw.ApplicationWindow):
             args=(all_pages,),
             daemon=True,
         ).start()
+
+    # ── Callbacks ─────────────────────────────────────────────────
 
     def _on_sidebar_selected(self, _listbox, row):
         if row is None:
@@ -206,35 +208,56 @@ class GCSetupWindow(Adw.ApplicationWindow):
             )
 
     def _on_apply_clicked(self, _button):
-        """Collect all selected items and open the bottom sheet."""
-        selected_items = []
+        """Collect selected non-installed items and open progress dialog."""
+        selected = []
         for page in self._pages.values():
-            selected_items.extend(page.get_selected_items())
+            selected.extend(page.get_selected_items())
 
-        if not selected_items:
-            dialog = Adw.AlertDialog(
-                heading='Nothing Selected',
-                body='Please select at least one item to install.',
-            )
-            dialog.add_response('ok', 'OK')
-            dialog.present(self)
+        if not selected:
+            toast = Adw.Toast.new('Nothing selected to install')
+            toast.set_timeout(2)
+            self._toast_overlay.add_toast(toast)
             return
 
-        self._progress_sheet = ProgressSheet(
-            selected_items,
-            on_complete_cb=self._on_install_complete,
-        )
+        self._apply_button.set_sensitive(False)
+        self._remove_button.set_sensitive(False)
 
-        self._bottom_sheet.set_sheet(self._progress_sheet.widget)
-        self._bottom_sheet.set_can_open(True)
-        self._bottom_sheet.set_can_close(False)
-        self._bottom_sheet.set_open(True)
+        dlg = ProgressDialog(
+            selected,
+            mode='install',
+            on_complete_cb=self._on_operation_complete,
+        )
+        dlg.present(self)
+        dlg.start()
+
+    def _on_remove_clicked(self, _button):
+        """Collect selected installed items and open progress dialog for removal."""
+        selected = []
+        for page in self._pages.values():
+            selected.extend(page.get_selected_installed_items())
+
+        if not selected:
+            toast = Adw.Toast.new('Nothing selected to remove')
+            toast.set_timeout(2)
+            self._toast_overlay.add_toast(toast)
+            return
 
         self._apply_button.set_sensitive(False)
-        self._progress_sheet.start()
+        self._remove_button.set_sensitive(False)
 
-    def _on_install_complete(self):
-        """Called when all installs are finished."""
-        self._bottom_sheet.set_can_close(True)
+        dlg = ProgressDialog(
+            selected,
+            mode='remove',
+            on_complete_cb=self._on_operation_complete,
+        )
+        dlg.present(self)
+        dlg.start()
+
+    def _on_operation_complete(self):
+        """Called when install or remove finishes."""
         self._apply_button.set_sensitive(True)
+        self._remove_button.set_sensitive(True)
+        # Clear checkboxes and re-detect
+        for page in self._pages.values():
+            page.clear_selection()
         self._run_detection()

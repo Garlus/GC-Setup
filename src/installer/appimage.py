@@ -28,6 +28,46 @@ def is_helium_installed():
     return os.path.isfile(HELIUM_APPIMAGE) and os.access(HELIUM_APPIMAGE, os.X_OK)
 
 
+def uninstall_helium():
+    """Remove the Helium browser AppImage, desktop entry, and icon.
+
+    Returns:
+        (success: bool, message: str)
+    """
+    errors = []
+    for path, label in [
+        (HELIUM_APPIMAGE, 'AppImage'),
+        (HELIUM_DESKTOP, 'desktop entry'),
+        (HELIUM_ICON, 'icon'),
+    ]:
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+            except OSError as e:
+                errors.append(f'{label}: {e}')
+
+    # Remove empty install dir
+    if os.path.isdir(HELIUM_DIR):
+        try:
+            os.rmdir(HELIUM_DIR)
+        except OSError:
+            pass  # not empty, leave it
+
+    # Update desktop database
+    try:
+        subprocess.run(
+            ['update-desktop-database',
+             os.path.expanduser('~/.local/share/applications')],
+            capture_output=True, timeout=10,
+        )
+    except (FileNotFoundError, OSError):
+        pass
+
+    if errors:
+        return False, f'Partial removal: {"; ".join(errors)}'
+    return True, 'Removed Helium browser'
+
+
 def install_helium(callback=None):
     """Download and install the Helium browser AppImage.
 

@@ -73,13 +73,15 @@ class SystemTweaksPage(CategoryPage):
         ok2 = self._run_gsettings(schema, 'font-hinting', 'slight')
 
         if ok1 and ok2:
-            self._font_status_icon.set_from_icon_name('emblem-ok-symbolic')
-            self._font_status_icon.set_css_classes(['success'])
+            self._font_status_icon.set_from_icon_name('object-select-symbolic')
+            self._font_status_icon.remove_css_class('error')
+            self._font_status_icon.add_css_class('success')
             self._font_apply_btn.set_visible(False)
             self._font_revert_btn.set_visible(True)
         else:
             self._font_status_icon.set_from_icon_name('dialog-error-symbolic')
-            self._font_status_icon.set_css_classes(['error'])
+            self._font_status_icon.remove_css_class('success')
+            self._font_status_icon.add_css_class('error')
 
         self._font_status_icon.set_visible(True)
 
@@ -95,5 +97,6 @@ class SystemTweaksPage(CategoryPage):
             self._font_apply_btn.set_visible(True)
         else:
             self._font_status_icon.set_from_icon_name('dialog-error-symbolic')
-            self._font_status_icon.set_css_classes(['error'])
+            self._font_status_icon.remove_css_class('success')
+            self._font_status_icon.add_css_class('error')
             self._font_status_icon.set_visible(True)

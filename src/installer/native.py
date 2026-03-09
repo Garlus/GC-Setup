@@ -184,3 +184,49 @@ def resolve_system_command(item):
 
     # No matching command
     return ''
+
+
+def uninstall_native(item):
+    """Uninstall a natively-installed package.
+
+    Tries native package manager removal first.  If no native package
+    is defined, attempts Flatpak removal using the flatpak_fallback ID.
+
+    Returns:
+        (success: bool, message: str)
+    """
+    install_info = item.get('install', {})
+    packages = install_info.get('packages', {})
+    fallback_id = install_info.get('flatpak_fallback', '')
+    name = item.get('name', 'Unknown')
+
+    pm = detect_package_manager()
+    pkg = packages.get(pm, '') if pm else ''
+
+    if pkg:
+        cmd_str = _build_uninstall_command(pm, pkg)
+        success, message = _run_on_host(cmd_str, name)
+        if success:
+            return True, message
+
+    # Try removing the flatpak fallback
+    if fallback_id:
+        from src.installer.flatpak import uninstall_flatpak_on_host
+        return uninstall_flatpak_on_host(fallback_id)
+
+    if not pkg:
+        return False, f'No package name defined for removal of {name}'
+    return False, f'Failed to remove {name}'
+
+
+def _build_uninstall_command(pm, pkg):
+    """Build the shell uninstall command for the given package manager."""
+    if pm == 'apt':
+        return f'sudo apt remove -y {pkg}'
+    elif pm == 'dnf':
+        return f'sudo dnf remove -y {pkg}'
+    elif pm == 'pacman':
+        return f'sudo pacman -Rns --noconfirm {pkg}'
+    elif pm == 'zypper':
+        return f'sudo zypper remove -y {pkg}'
+    return f'{pm} remove {pkg}'

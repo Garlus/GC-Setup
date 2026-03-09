@@ -42,6 +42,38 @@ def is_extension_installed(uuid):
         return False
 
 
+def uninstall_extension(uuid):
+    """Disable and uninstall a GNOME Shell extension.
+
+    Returns:
+        (success: bool, message: str)
+    """
+    try:
+        # Disable first
+        disable_cmd = ['gnome-extensions', 'disable', uuid]
+        if os.path.exists('/.flatpak-info'):
+            disable_cmd = ['flatpak-spawn', '--host'] + disable_cmd
+        subprocess.run(disable_cmd, capture_output=True, timeout=10)
+
+        # Uninstall
+        cmd = ['gnome-extensions', 'uninstall', uuid]
+        if os.path.exists('/.flatpak-info'):
+            cmd = ['flatpak-spawn', '--host'] + cmd
+
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=30,
+        )
+
+        if result.returncode == 0:
+            return True, f'Removed extension {uuid}'
+        return False, f'Failed to remove {uuid}: {result.stderr.strip()}'
+
+    except subprocess.TimeoutExpired:
+        return False, f'Removal of {uuid} timed out'
+    except (FileNotFoundError, OSError) as e:
+        return False, f'Error: {e}'
+
+
 def install_extension(ext_id, uuid, callback=None):
     """Install a GNOME Shell extension by downloading from extensions.gnome.org.
 

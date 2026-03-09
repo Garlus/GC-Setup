@@ -150,6 +150,46 @@ def _install_via_host_spawn(flatpak_id, callback=None):
         return False, msg
 
 
+def uninstall_flatpak_on_host(flatpak_id):
+    """Uninstall a Flatpak app, handling sandbox.
+
+    Tries --user first, then system-wide if that fails.
+
+    Returns:
+        (success: bool, message: str)
+    """
+    import os
+    in_sandbox = os.path.exists('/.flatpak-info')
+
+    # Try user install first, then system
+    for scope in ('--user', '--system'):
+        try:
+            if in_sandbox:
+                cmd = [
+                    'flatpak-spawn', '--host', 'flatpak', 'uninstall',
+                    scope, '--noninteractive', '-y', flatpak_id,
+                ]
+            else:
+                cmd = [
+                    'flatpak', 'uninstall',
+                    scope, '--noninteractive', '-y', flatpak_id,
+                ]
+
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=120,
+            )
+
+            if result.returncode == 0:
+                return True, f'Removed {flatpak_id}'
+
+        except subprocess.TimeoutExpired:
+            return False, f'Removal of {flatpak_id} timed out'
+        except (FileNotFoundError, OSError) as e:
+            return False, f'Error: {e}'
+
+    return False, f'Failed to remove {flatpak_id} (not found in user or system scope)'
+
+
 def is_flatpak_installed_on_host(flatpak_id):
     """Check if a Flatpak is installed, handling sandbox."""
     import os

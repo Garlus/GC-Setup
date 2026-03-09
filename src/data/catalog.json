@@ -544,6 +544,7 @@
         {
           "name": "Full System Update",
           "description": "Update all system packages and Flatpaks to their latest versions",
+          "runnable": true,
           "install": {
             "method": "system",
             "commands": {
@@ -558,6 +559,7 @@
         {
           "name": "Full System Cleanup",
           "description": "Remove unnecessary packages, clean old caches, truncate logs, and empty the trash",
+          "runnable": true,
           "install": {
             "method": "system",
             "commands": {
@@ -609,7 +611,7 @@
               "zypper": "sudo zypper install -y fetchmsttfonts"
             }
           },
-          "detect": { "command": "fc-match" }
+          "detect": {}
         },
         {
           "name": "Common Codecs",
@@ -634,7 +636,7 @@
               "all": "sudo bash -c 'apt install -y dkms linux-headers-$(uname -r) 2>/dev/null || dnf install -y dkms kernel-devel 2>/dev/null || pacman -S --noconfirm dkms linux-headers 2>/dev/null; cd /tmp && rm -rf xpadneo && git clone https://github.com/atar-axis/xpadneo.git && cd xpadneo && ./install.sh'"
             }
           },
-          "detect": { "command": "modinfo" }
+          "detect": {}
         },
         {
           "name": "btop++",
