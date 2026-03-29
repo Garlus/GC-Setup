@@ -10,7 +10,10 @@ A GNOME application for setting up and configuring your Linux system with popula
 This tool is primarily designed and tested for **Fedora Linux**. While it includes support for other distributions (Debian/Ubuntu, Arch Linux, openSUSE), the best experience and most reliable functionality is on Fedora with the `dnf` package manager.
 
 **Supported distributions:**
-- ✅ **Fedora**
+- ✅ **Fedora** (primary, fully tested)
+- ⚠️ Debian/Ubuntu (apt) - community supported
+- ⚠️ Arch Linux (pacman) - community supported  
+- ⚠️ openSUSE (zypper) - community supported
 
 ## Quick Install (One-Line Command)
 
