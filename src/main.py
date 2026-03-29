@@ -1,5 +1,6 @@
 """GC-Setup main application."""
 
+import os
 import sys
 import gi
 
@@ -21,12 +22,18 @@ class GCSetupApplication(Adw.Application):
             application_id=APP_ID,
             flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
         )
+        self._first_run_shown = False
 
     def do_activate(self):
         win = self.props.active_window
         if not win:
             win = GCSetupWindow(application=self)
         win.present()
+        
+        # Show first-run dialog if needed
+        if not self._first_run_shown and self._is_first_run():
+            self._first_run_shown = True
+            GLib.timeout_add(100, self._show_first_run_dialog, win)
 
     def do_startup(self):
         Adw.Application.do_startup(self)
@@ -54,6 +61,56 @@ class GCSetupApplication(Adw.Application):
             copyright='Copyright 2026 GC-Setup Team',
         )
         about.present(self.props.active_window)
+
+    def _is_first_run(self):
+        """Check if this is the first run by looking for a config flag."""
+        config_dir = GLib.get_user_config_dir()
+        flag_file = os.path.join(config_dir, 'gc-setup', 'first-run-done')
+        return not os.path.exists(flag_file)
+
+    def _mark_first_run_done(self):
+        """Mark that the first run dialog has been shown."""
+        config_dir = GLib.get_user_config_dir()
+        gc_config_dir = os.path.join(config_dir, 'gc-setup')
+        flag_file = os.path.join(gc_config_dir, 'first-run-done')
+        
+        try:
+            os.makedirs(gc_config_dir, exist_ok=True)
+            with open(flag_file, 'w') as f:
+                f.write('1')
+        except OSError:
+            pass
+
+    def _show_first_run_dialog(self, parent_window):
+        """Show the first-run warning dialog."""
+        dialog = Adw.AlertDialog(
+            heading='Welcome to GC-Setup',
+            body='This application is primarily designed for **Fedora Linux**.\n\n'
+                 'While other distributions (Debian/Ubuntu, Arch, openSUSE) are supported, '
+                 'they may have limited functionality or require additional manual steps.\n\n'
+                 'For the best experience, use GC-Setup on Fedora with the dnf package manager.',
+        )
+        dialog.set_body_use_markup(True)
+        
+        dialog.add_response('cancel', 'Exit')
+        dialog.add_response('continue', 'Continue')
+        dialog.set_response_appearance('continue', Adw.ResponseAppearance.SUGGESTED)
+        dialog.set_default_response('continue')
+        dialog.set_close_response('cancel')
+        
+        dialog.connect('response', self._on_first_run_response, parent_window)
+        dialog.present(parent_window)
+        
+        return False  # Don't repeat the timeout
+
+    def _on_first_run_response(self, dialog, response, parent_window):
+        """Handle first-run dialog response."""
+        if response == 'continue':
+            self._mark_first_run_done()
+        else:
+            # User chose to exit
+            parent_window.close()
+            self.quit()
 
 
 def main():
