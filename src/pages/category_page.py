@@ -1,5 +1,7 @@
 """Generic category page — renders items from catalog data with checkboxes."""
 
+import threading
+
 import gi
 
 gi.require_version('Gtk', '4.0')
@@ -85,7 +87,7 @@ class CategoryPage(Gtk.ScrolledWindow):
         btn = Gtk.Button.new_from_icon_name('media-playback-start-symbolic')
         btn.set_valign(Gtk.Align.CENTER)
         btn.set_css_classes(['flat', 'circular'])
-        btn.set_tooltip_text('Copy command to clipboard')
+        btn.set_tooltip_text('Run action now')
         btn.connect('clicked', self._on_run_clicked, item, btn)
         row.add_suffix(btn)
         row.set_activatable_widget(btn)
@@ -95,29 +97,43 @@ class CategoryPage(Gtk.ScrolledWindow):
     # ── Runnable item handler ─────────────────────────────────────
 
     def _on_run_clicked(self, _button, item, btn_ref):
-        """Resolve the system command, copy to clipboard, show toast."""
-        from src.installer.native import resolve_system_command
-
-        cmd = resolve_system_command(item)
-        if not cmd:
-            cmd = '# No command available for your package manager'
-
-        display = Gdk.Display.get_default()
-        if display:
-            clipboard = display.get_clipboard()
-            clipboard.set(cmd)
-
-        # Visual feedback — swap icon briefly
-        btn_ref.set_icon_name('object-select-symbolic')
+        """Execute runnable system action on host in a background thread."""
+        btn_ref.set_icon_name('process-working-symbolic')
         btn_ref.set_sensitive(False)
-        GLib.timeout_add(2000, self._reset_run_button, btn_ref)
 
-        # Toast via window overlay
+        threading.Thread(
+            target=self._run_runnable_action,
+            args=(item, btn_ref),
+            daemon=True,
+        ).start()
+
         window = self.get_root()
         if hasattr(window, '_toast_overlay'):
-            toast = Adw.Toast.new('Command copied \u2014 paste in your terminal')
+            toast = Adw.Toast.new(f'Running: {item.get("name", "Action")}')
             toast.set_timeout(3)
             window._toast_overlay.add_toast(toast)
+
+    def _run_runnable_action(self, item, btn_ref):
+        from src.installer.native import execute_system_command
+
+        ok, msg = execute_system_command(item)
+        GLib.idle_add(self._on_runnable_complete, btn_ref, ok, msg)
+
+    def _on_runnable_complete(self, btn_ref, ok, msg):
+        if ok:
+            btn_ref.set_icon_name('object-select-symbolic')
+        else:
+            btn_ref.set_icon_name('dialog-warning-symbolic')
+
+        GLib.timeout_add(2000, self._reset_run_button, btn_ref)
+
+        window = self.get_root()
+        if hasattr(window, '_toast_overlay'):
+            toast = Adw.Toast.new('Action completed' if ok else msg)
+            toast.set_timeout(4)
+            window._toast_overlay.add_toast(toast)
+
+        return False
 
     @staticmethod
     def _reset_run_button(btn):

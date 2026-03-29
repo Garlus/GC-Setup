@@ -52,6 +52,8 @@ def detect_installed_items(pages):
 
             if installed:
                 GLib.idle_add(page.mark_installed, item_data)
+            else:
+                GLib.idle_add(page.unmark_installed, item_data)
 
 
 def _check_binary_on_host(binary_name):

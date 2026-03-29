@@ -11,9 +11,8 @@ from gi.repository import Gtk, Adw, GLib, Gdk
 
 from src.installer.flatpak import install_flatpak_on_host, uninstall_flatpak_on_host
 from src.installer.extensions import install_extension, uninstall_extension
-from src.installer.appimage import install_helium, uninstall_helium
 from src.installer.native import (
-    install_native, uninstall_native, resolve_system_command,
+    install_native, uninstall_native, resolve_system_command, execute_system_command,
 )
 
 
@@ -38,10 +37,11 @@ class ProgressDialog(Adw.Dialog):
         self._work_items = []
         self._errors = []
 
-        # Separate system items (copy-paste only) from actionable items
+        # Separate system items only in remove mode.
+        # In install mode, system commands are executed directly.
         for item in self._items:
             method = item.get('install', {}).get('method', '')
-            if method == 'system':
+            if method == 'system' and self._mode == 'remove':
                 self._system_items.append(item)
             else:
                 self._work_items.append(item)
@@ -143,9 +143,9 @@ class ProgressDialog(Adw.Dialog):
             return (False, 'No flatpak_id') if not fid else install_flatpak_on_host(fid)
         elif method == 'extension':
             eid, uuid = info.get('ext_id', 0), info.get('uuid', '')
-            return (False, 'Missing ext_id/uuid') if not eid or not uuid else install_extension(eid, uuid)
-        elif method == 'appimage':
-            return install_helium()
+            return (False, 'Missing uuid') if not uuid else install_extension(eid, uuid)
+        elif method == 'system':
+            return execute_system_command(item)
         return False, f'Unknown method: {method}'
 
     # ── Uninstall dispatch ────────────────────────────────────────
@@ -163,8 +163,6 @@ class ProgressDialog(Adw.Dialog):
         elif method == 'extension':
             uuid = info.get('uuid', '') or detect.get('extension_uuid', '')
             return (False, 'No uuid') if not uuid else uninstall_extension(uuid)
-        elif method == 'appimage':
-            return uninstall_helium()
         return False, f'Unknown method: {method}'
 
     # ── Completion ────────────────────────────────────────────────
