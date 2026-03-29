@@ -10,10 +10,24 @@ A GNOME application for setting up and configuring your Linux system with popula
 This tool is primarily designed and tested for **Fedora Linux**. While it includes support for other distributions (Debian/Ubuntu, Arch Linux, openSUSE), the best experience and most reliable functionality is on Fedora with the `dnf` package manager.
 
 **Supported distributions:**
-- ✅ **Fedora** (primary, fully tested)
-- ⚠️ Debian/Ubuntu (apt) - community supported
-- ⚠️ Arch Linux (pacman) - community supported  
-- ⚠️ openSUSE (zypper) - community supported
+- ✅ **Fedora**
+
+## Quick Install (One-Line Command)
+
+Install and run GC-Setup with a single command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/gcsetup/gc-setup/main/install.sh | bash
+```
+
+**What this does:**
+- Installs Flatpak (if not present)
+- Adds Flathub repository
+- Clones and builds GC-Setup
+- Installs as a Flatpak application
+- Optionally launches the app
+
+**For more installation options, see [INSTALL.md](INSTALL.md)**
 
 ## Features
 
@@ -24,7 +38,7 @@ This tool is primarily designed and tested for **Fedora Linux**. While it includ
 - **System Tweaks** — Quick actions for system updates, cleanup, virtualization, and more
 
 
-## Building
+## Manual Building
 
 ### Requirements
 
@@ -37,6 +51,29 @@ flatpak install flathub org.gnome.Sdk//49
 ### Build with GNOME Builder
 
 Open the project in GNOME Builder and hit the Play button.
+
+## Running GC-Setup
+
+After installation via the install script:
+
+```bash
+# Launch from command line
+flatpak run io.github.gcsetup.GCSetup
+
+# Or search for "GC-Setup" in your application menu
+```
+
+To update:
+```bash
+curl -fsSL https://raw.githubusercontent.com/gcsetup/gc-setup/main/install.sh | bash
+```
+
+## Uninstalling
+
+```bash
+flatpak uninstall --user io.github.gcsetup.GCSetup
+rm -rf ~/.local/share/gc-setup
+```
 
 ## Contributing
 
