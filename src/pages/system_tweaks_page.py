@@ -19,9 +19,19 @@ class SystemTweaksPage(CategoryPage):
     def __init__(self, category_data, **kwargs):
         super().__init__(category_data, **kwargs)
 
-        # Append font rendering group to the existing page
+        # Append experimental warning banner at the top
         page = self._pref_page  # Set by CategoryPage.__init__
+        
+        # Add experimental warning banner
+        warning_banner = Adw.PreferencesGroup()
+        warning_row = Adw.ActionRow()
+        warning_row.set_title('⚠️ Experimental Features')
+        warning_row.set_subtitle('System tweaks modify system settings and may require manual intervention or cause issues on some systems.')
+        warning_row.add_css_class('warning')
+        warning_banner.add(warning_row)
+        page.add(warning_banner)
 
+        # Append font rendering group to the existing page
         font_group = Adw.PreferencesGroup()
         font_group.set_title('Font Rendering')
         font_group.set_description(

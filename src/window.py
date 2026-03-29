@@ -113,6 +113,14 @@ class GCSetupWindow(Adw.ApplicationWindow):
             lbl.set_hexpand(True)
             box.append(icon)
             box.append(lbl)
+            
+            # Add experimental badge for system-tweaks
+            if cat_id == 'system-tweaks':
+                badge = Gtk.Label(label='Experimental')
+                badge.set_css_classes(['caption', 'dim-label'])
+                badge.set_margin_start(6)
+                box.append(badge)
+            
             row.set_child(box)
             self._sidebar_list.append(row)
 
