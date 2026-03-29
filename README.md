@@ -1,5 +1,5 @@
-
-# GC-Setup
+![icon](https://github.com/Garlus/GC-Setup/blob/main/data/icons/folder-drag-accept.png)
+# GC-Setup 
 
 **Garlicus Computer - Setup**
 
