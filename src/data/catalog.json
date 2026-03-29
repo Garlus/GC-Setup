@@ -12,12 +12,6 @@
           "detect": { "flatpak_id": "app.zen_browser.zen" }
         },
         {
-          "name": "Helium",
-          "description": "Private, fast Chromium-based browser (AppImage)",
-          "install": { "method": "appimage", "repo": "imputnet/helium-linux" },
-          "detect": { "command": "helium" }
-        },
-        {
           "name": "Firefox",
           "description": "Open-source web browser by Mozilla",
           "install": {
@@ -533,6 +527,48 @@
           "description": "Alternative default light theme for vanilla GNOME",
           "install": { "method": "extension", "ext_id": 6750, "uuid": "luminus@dikasp" },
           "detect": { "extension_uuid": "luminus@dikasp" }
+        },
+        {
+          "name": "Apps Menu",
+          "description": "Adds a traditional applications menu to the top panel",
+          "install": { "method": "extension", "ext_id": 6, "uuid": "apps-menu@gnome-shell-extensions.gcampax.github.com" },
+          "detect": { "extension_uuid": "apps-menu@gnome-shell-extensions.gcampax.github.com" }
+        },
+        {
+          "name": "Dash to Dock",
+          "description": "Turns the dash into a dock for faster app launching",
+          "install": { "method": "extension", "ext_id": 307, "uuid": "dash-to-dock@micxgx.gmail.com" },
+          "detect": { "extension_uuid": "dash-to-dock@micxgx.gmail.com" }
+        },
+        {
+          "name": "Dash to Panel",
+          "description": "Combines dash and top bar into one configurable panel",
+          "install": { "method": "extension", "ext_id": 1160, "uuid": "dash-to-panel@jderose9.github.com" },
+          "detect": { "extension_uuid": "dash-to-panel@jderose9.github.com" }
+        },
+        {
+          "name": "User Themes",
+          "description": "Enables loading custom GNOME Shell themes",
+          "install": { "method": "extension", "ext_id": 19, "uuid": "user-theme@gnome-shell-extensions.gcampax.github.com" },
+          "detect": { "extension_uuid": "user-theme@gnome-shell-extensions.gcampax.github.com" }
+        },
+        {
+          "name": "Caffeine",
+          "description": "Prevents automatic suspend and screen blanking",
+          "install": { "method": "extension", "ext_id": 517, "uuid": "caffeine@patapon.info" },
+          "detect": { "extension_uuid": "caffeine@patapon.info" }
+        },
+        {
+          "name": "AppIndicator and KStatusNotifierItem Support",
+          "description": "Adds support for legacy tray icons in GNOME Shell",
+          "install": { "method": "extension", "ext_id": 615, "uuid": "ubuntu-appindicators@ubuntu.com" },
+          "detect": { "extension_uuid": "ubuntu-appindicators@ubuntu.com" }
+        },
+        {
+          "name": "Arc Menu",
+          "description": "Adds an application launcher menu with multiple layouts",
+          "install": { "method": "extension", "ext_id": 3628, "uuid": "arcmenu@arcmenu.com" },
+          "detect": { "extension_uuid": "arcmenu@arcmenu.com" }
         }
       ]
     },
@@ -605,9 +641,9 @@
           "install": {
             "method": "system",
             "commands": {
-              "apt": "sudo apt install -y ttf-mscorefonts-installer",
-              "dnf": "sudo dnf install -y curl cabextract xorg-x11-font-utils fontconfig && sudo rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm",
-              "pacman": "yay -S --noconfirm ttf-ms-fonts || paru -S --noconfirm ttf-ms-fonts",
+              "apt": "echo 'ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true' | sudo debconf-set-selections && sudo apt install -y ttf-mscorefonts-installer",
+              "dnf": "sudo dnf install -y curl cabextract xorg-x11-font-utils fontconfig && curl -L -o /tmp/msttcore-fonts-installer.rpm https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm && sudo rpm -i /tmp/msttcore-fonts-installer.rpm && rm -f /tmp/msttcore-fonts-installer.rpm",
+              "pacman": "(command -v yay &>/dev/null && yay -S --noconfirm ttf-ms-fonts) || (command -v paru &>/dev/null && paru -S --noconfirm ttf-ms-fonts) || echo 'Error: Neither yay nor paru is installed. Please install an AUR helper first.'",
               "zypper": "sudo zypper install -y fetchmsttfonts"
             }
           },

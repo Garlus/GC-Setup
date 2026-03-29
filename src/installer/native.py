@@ -128,10 +128,15 @@ def _run_on_host(cmd_str, name):
             return True, f'Successfully installed {name}'
         else:
             stderr = result.stderr.strip()
-            return False, f'Failed to install {name}: {stderr}'
+            stdout = result.stdout.strip()
+            # Combine stderr and stdout for better error reporting
+            error_msg = stderr if stderr else stdout
+            if not error_msg:
+                error_msg = f'Command exited with code {result.returncode}'
+            return False, f'Failed to install {name}: {error_msg}'
 
     except subprocess.TimeoutExpired:
-        return False, f'Installation of {name} timed out'
+        return False, f'Installation of {name} timed out after 5 minutes'
     except (FileNotFoundError, OSError) as e:
         return False, f'Error installing {name}: {e}'
 
@@ -186,11 +191,24 @@ def resolve_system_command(item):
     return ''
 
 
+def execute_system_command(item):
+    """Execute a system-method command for the detected package manager.
+
+    Returns:
+        (success: bool, message: str)
+    """
+    name = item.get('name', 'Unknown')
+    cmd = resolve_system_command(item)
+    if not cmd:
+        return False, f'No command available for {name} on this package manager'
+    return _run_on_host(cmd, name)
+
+
 def uninstall_native(item):
     """Uninstall a natively-installed package.
 
-    Tries native package manager removal first.  If no native package
-    is defined, attempts Flatpak removal using the flatpak_fallback ID.
+    Tries native package manager removal first.  If that fails,
+    attempts Flatpak removal using the flatpak_fallback ID.
 
     Returns:
         (success: bool, message: str)
@@ -203,20 +221,26 @@ def uninstall_native(item):
     pm = detect_package_manager()
     pkg = packages.get(pm, '') if pm else ''
 
+    # Try native removal first if a package name is defined
     if pkg:
         cmd_str = _build_uninstall_command(pm, pkg)
         success, message = _run_on_host(cmd_str, name)
         if success:
             return True, message
 
-    # Try removing the flatpak fallback
+    # If native failed or not defined, try removing the flatpak fallback
     if fallback_id:
-        from src.installer.flatpak import uninstall_flatpak_on_host
-        return uninstall_flatpak_on_host(fallback_id)
+        from src.installer.flatpak import uninstall_flatpak_on_host, is_flatpak_installed_on_host
+        if is_flatpak_installed_on_host(fallback_id):
+            return uninstall_flatpak_on_host(fallback_id)
 
-    if not pkg:
-        return False, f'No package name defined for removal of {name}'
-    return False, f'Failed to remove {name}'
+    # Both methods failed or unavailable
+    if not pkg and not fallback_id:
+        return False, f'No uninstall method available for {name}'
+    elif pkg and not fallback_id:
+        return False, f'Failed to remove native {name}'
+    else:
+        return False, f'{name} is not installed'
 
 
 def _build_uninstall_command(pm, pkg):

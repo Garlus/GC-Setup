@@ -87,7 +87,7 @@ def install_extension(ext_id, uuid, callback=None):
     """
     shell_version = get_shell_version()
     if not shell_version:
-        msg = 'Could not detect GNOME Shell version'
+        msg = 'Could not detect GNOME Shell version. Is GNOME Shell running?'
         if callback:
             callback(False, msg)
         return False, msg
@@ -152,7 +152,7 @@ def install_extension(ext_id, uuid, callback=None):
             return False, msg
 
     except urllib.error.URLError as e:
-        msg = f'Network error installing {uuid}: {e}'
+        msg = f'Network error installing {uuid}: Cannot reach extensions.gnome.org'
         if callback:
             callback(False, msg)
         return False, msg
